@@ -1,0 +1,52 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yonadry <yonadry@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/17 18:57:40 by yonadry           #+#    #+#             */
+/*   Updated: 2023/02/07 20:00:52 by yonadry          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../minitalk.h"
+
+static void	sig_handler(int signum, siginfo_t *info, void *ptr)
+{
+	static int		save[8];
+	static int		i;
+	static pid_t	prev_pid;
+
+	(void) ptr;
+	if (prev_pid != info->si_pid)
+	{
+		i = 0;
+		prev_pid = info->si_pid;
+	}
+	if (signum == SIGUSR1)
+		save[i++] = 1;
+	else if (signum == SIGUSR2)
+		save[i++] = 0;
+	if (i == 8)
+	{
+		to_char(save);
+		i = 0;
+	}
+}
+
+int	main(void)
+{
+	struct sigaction	act;
+
+	sigemptyset(&act.sa_mask);
+	act.sa_sigaction = sig_handler;
+	act.sa_flags = SA_SIGINFO;
+	ft_putstr("The PID is: ");
+	ft_putnbr(getpid());
+	ft_putchar('\n');
+	sigaction(SIGUSR1, &act, 0);
+	sigaction(SIGUSR2, &act, 0);
+	while (1)
+		pause();
+}
