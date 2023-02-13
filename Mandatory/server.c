@@ -6,7 +6,7 @@
 /*   By: yonadry <yonadry@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 18:57:40 by yonadry           #+#    #+#             */
-/*   Updated: 2023/02/07 20:00:52 by yonadry          ###   ########.fr       */
+/*   Updated: 2023/02/13 17:18:12 by yonadry          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static void	sig_handler(int signum, siginfo_t *info, void *ptr)
 	static int		save[8];
 	static int		i;
 	static pid_t	prev_pid;
+	int				charac;
 
 	(void) ptr;
 	if (prev_pid != info->si_pid)
@@ -30,7 +31,8 @@ static void	sig_handler(int signum, siginfo_t *info, void *ptr)
 		save[i++] = 0;
 	if (i == 8)
 	{
-		to_char(save);
+		charac = to_char(save);
+		write(1, &charac, 1);
 		i = 0;
 	}
 }
